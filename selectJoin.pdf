@@ -1,0 +1,237 @@
+# SELECT e JOIN — explicação **linha a linha** (com exemplos práticos)
+
+Ótimo — abaixo está tudo explicado passo a passo para você copiar na prova. Vou primeiro mostrar exemplos simples e depois detalhar cada linha. Sempre que eu usar *aliases* (`f`, `d`) ou `AS`, vou explicar o porquê.
+
+---
+
+## 1) `SELECT` — query básica (exemplo)
+
+```sql
+SELECT nome, salario + 200 AS novo_salario
+FROM funcionario
+WHERE salario > 1500
+ORDER BY novo_salario DESC;
+```
+
+### Explicação linha a linha
+
+1. `SELECT nome, salario + 200 AS novo_salario`
+
+   * `SELECT` inicia a cláusula que **especifica as colunas** que serão retornadas.
+   * `nome` — pede a coluna `nome` da tabela (será exibida tal qual).
+   * `salario + 200` — expressão: soma 200 ao valor da coluna `salario` para cada linha (não altera o dado na tabela).
+   * `AS novo_salario` — **apelido** (alias) para a coluna resultante; na saída aparecerá como `novo_salario`. O `AS` é opcional (`salario + 200 novo_salario` também funciona em muitos SGBDs), mas melhora leitura.
+
+2. `FROM funcionario`
+
+   * `FROM` indica **de qual tabela** vamos buscar os dados. Aqui é a tabela `funcionario`.
+
+3. `WHERE salario > 1500`
+
+   * `WHERE` filtra as linhas que satisfazem a condição booleana. Apenas funcionários com `salario` maior que 1500 aparecem.
+   * Importante: operações sobre `NULL` precisam usar `IS NULL` / `IS NOT NULL`.
+
+4. `ORDER BY novo_salario DESC;`
+
+   * `ORDER BY` ordena o resultado. Pode ordenar por nomes de colunas, por expressão ou por posição (ex.: `ORDER BY 2`).
+   * `DESC` = decrescente (maior para menor). `ASC` = crescente (padrão).
+
+---
+
+### Observações rápidas sobre `SELECT`
+
+* `SELECT *` retorna **todas** as colunas da(s) tabela(s).
+* `DISTINCT` remove duplicatas: `SELECT DISTINCT cargo FROM funcionario;`
+* `LIMIT` ou `FETCH` (dependendo do SGBD) restringe o número de linhas: `LIMIT 10`.
+* `GROUP BY` agrega por colunas; use com funções agregadas (`SUM`, `AVG`, `COUNT`).
+* `HAVING` filtra grupos (aplica-se depois do `GROUP BY`).
+
+Exemplo com agregação:
+
+```sql
+SELECT cod_dep, AVG(salario) AS media_sal
+FROM funcionario
+WHERE salario IS NOT NULL
+GROUP BY cod_dep
+HAVING AVG(salario) > 2000;
+```
+
+* `AVG(salario)` calcula a média por departamento; `HAVING` filtra departamentos cuja média é > 2000.
+
+---
+
+## 2) `JOIN` — objetivo e tipos (exemplo base)
+
+```sql
+SELECT f.nome, d.nome AS departamento
+FROM funcionario f
+INNER JOIN departamento d
+  ON f.cod_dep = d.cod_dep;
+```
+
+### Explicação linha por linha
+
+1. `SELECT f.nome, d.nome AS departamento`
+
+   * Seleciona a coluna `nome` da tabela `funcionario` (apelidada como `f`) e a coluna `nome` da tabela `departamento` (apelidada `d`).
+   * `AS departamento` dá um nome legível à coluna de saída.
+
+2. `FROM funcionario f`
+
+   * Define a tabela principal `funcionario`.
+   * `f` é um **alias** (apelido) para `funcionario`, usado para escrever menos e evitar ambiguidade quando colunas têm o mesmo nome em tabelas diferentes.
+
+3. `INNER JOIN departamento d`
+
+   * `INNER JOIN` une (combina) linhas de `funcionario` e `departamento` **apenas quando a condição de junção for verdadeira**.
+   * `departamento d` é a tabela que está sendo juntada, com alias `d`.
+
+4. `ON f.cod_dep = d.cod_dep;`
+
+   * `ON` especifica a **condição de junção**: relaciona `cod_dep` entre as duas tabelas. Apenas pares de linhas que satisfazem `f.cod_dep = d.cod_dep` aparecerão no resultado.
+
+---
+
+### Tipos de JOIN e explicação prática
+
+**a) CROSS JOIN** — produto cartesiano (todas as combinações)
+
+```sql
+SELECT f.nome, d.nome
+FROM funcionario f
+CROSS JOIN departamento d;
+```
+
+* Para cada linha de `funcionario`, combina-se com *todas* as linhas de `departamento`. Geralmente não é o que se quer para relacionamentos.
+
+**b) INNER JOIN** — mostrado acima
+
+* Resultado: somente linhas com correspondência nas duas tabelas.
+
+**c) LEFT (OUTER) JOIN** — pega todos da tabela da esquerda + correspondências
+
+```sql
+SELECT f.nome, d.nome AS departamento
+FROM funcionario f
+LEFT JOIN departamento d
+  ON f.cod_dep = d.cod_dep;
+```
+
+* Para funcionários sem `cod_dep` (NULL) ou com `cod_dep` que não exista em `departamento`, o resultado terá `d.nome = NULL`. Mas o funcionário **aparece** — bom para listar funcionários mesmo sem departamento.
+
+**d) RIGHT (OUTER) JOIN** — simétrico do LEFT; pega todos da tabela da direita
+
+```sql
+SELECT f.nome, d.nome AS departamento
+FROM funcionario f
+RIGHT JOIN departamento d
+  ON f.cod_dep = d.cod_dep;
+```
+
+* Mostra **todos** os departamentos; funcionários inexistentes em alguns departamentos aparecem como `NULL`.
+
+**e) FULL OUTER JOIN** — combina LEFT + RIGHT
+
+```sql
+SELECT f.nome, d.nome
+FROM funcionario f
+FULL JOIN departamento d
+  ON f.cod_dep = d.cod_dep;
+```
+
+* Mostra linhas com correspondência **e** também linhas não correspondentes de ambos os lados (quando suportado pelo SGBD).
+
+---
+
+### `ON` vs `USING`
+
+* `ON f.cod_dep = d.cod_dep` — flexível; permite comparar qualquer expressão.
+* `USING (cod_dep)` — atalho quando as colunas têm o mesmo nome em ambas as tabelas. Exemplo:
+
+```sql
+SELECT f.nome, d.nome
+FROM funcionario f
+JOIN departamento d USING (cod_dep);
+```
+
+* `USING` retorna a coluna `cod_dep` apenas uma vez (em vez de `f.cod_dep` e `d.cod_dep` separadas).
+
+---
+
+### Ambiguidade de colunas
+
+Se duas tabelas têm coluna com mesmo nome, **qualifique com alias**:
+
+```sql
+SELECT f.nome, d.nome
+FROM funcionario f, departamento d
+WHERE f.cod_dep = d.cod_dep;
+```
+
+Nesse exemplo (join implícito), sem qualificar `nome` o SGBD reclamaria — por isso `f.nome` e `d.nome`.
+
+---
+
+### Exemplo com `LEFT JOIN` + `WHERE` comum (cuidado)
+
+```sql
+SELECT f.nome, d.nome
+FROM funcionario f
+LEFT JOIN departamento d ON f.cod_dep = d.cod_dep
+WHERE d.local = 'São Paulo';
+```
+
+* Atenção: esse `WHERE` **filtra após a junção** e converterá o `LEFT JOIN` em comportamento parecido com `INNER JOIN`, porque linhas onde `d.local` é `NULL` (funcionários sem departamento) serão descartadas.
+* Se quiser incluir funcionários sem departamento além dos departamentos em SP, use `WHERE d.local = 'São Paulo' OR d.local IS NULL`.
+
+---
+
+## 3) Exemplos práticos e comentários rápidos (copiar na prova)
+
+### Mostrar funcionários e departamento — incluindo quem não tem departamento
+
+```sql
+SELECT f.cod_fun, f.nome, d.nome AS departamento
+FROM funcionario f
+LEFT JOIN departamento d
+  ON f.cod_dep = d.cod_dep;
+```
+
+### Contar funcionários por departamento (agregação + JOIN)
+
+```sql
+SELECT d.nome AS departamento, COUNT(f.cod_fun) AS total_func
+FROM departamento d
+LEFT JOIN funcionario f ON f.cod_dep = d.cod_dep
+GROUP BY d.nome;
+```
+
+* `COUNT(f.cod_fun)` conta funcionários por departamento; `LEFT JOIN` garante que departamentos sem funcionários apareçam com `total_func = 0`.
+
+### Funcionários cujo chefe (supondo coluna chefe) está no mesmo departamento
+
+(Supondo `chefe_cod` em `funcionario` que referencia outro `cod_fun`)
+
+```sql
+SELECT e.nome AS empregado, c.nome AS chefe
+FROM funcionario e
+LEFT JOIN funcionario c ON e.chefe_cod = c.cod_fun
+WHERE e.cod_dep = c.cod_dep;
+```
+
+* Aqui juntamos a tabela `funcionario` consigo mesma — *self-join* — usando aliases `e` (empregado) e `c` (chefe).
+
+---
+
+## Dicas rápidas que caem na prova
+
+* Sempre qualifique colunas ambíguas: `tabela.coluna` ou `alias.coluna`.
+* Use `IS NULL` / `IS NOT NULL` para checar nulos.
+* `LEFT JOIN` + `WHERE` em colunas da tabela direita pode anular o efeito do `LEFT` — pense na ordem (junção → filtração).
+* `ON` define o critério de ligação; `WHERE` filtra o resultado já combinado.
+* Para somas/contagens por grupo, `GROUP BY` é obrigatório para colunas não agregadas.
+* `DISTINCT` antes do SELECT remove duplicatas da saída.
+
+---
+
+Se quiser, eu já gero **5 exercícios práticos** de SELECT/JOIN com gabarito e explicação linha a linha para você treinar — quer que eu faça isso agora?
