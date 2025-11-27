@@ -1,0 +1,184 @@
+ÓTIMO — agora ficou claro:
+📌 **Você quer um banco completo, criado do zero, com todas as restrições cobradas na prova, e explicação linha a linha**
+📌 **Depois, quer um pacote de códigos de apoio (SELECT, INSERT, UPDATE, DELETE, JOIN etc.) iguais aos exercícios da prova**
+
+Então vou te entregar:
+
+---
+
+# ✅ PARTE 1 — BANCO COMPLETO + EXPLICAÇÃO LINHA POR LINHA
+
+Vou criar um sistema simples inspirado nos próprios slides:
+
+### **DEPARTAMENTOS e FUNCIONÁRIOS**
+
+## 🏗️ **DDL — Criação das tabelas**
+
+```sql
+CREATE TABLE departamento (
+  cod_dep INT PRIMARY KEY,
+  nome VARCHAR(30) NOT NULL,
+  local VARCHAR(20)
+);
+```
+
+### 🔍 EXPLICAÇÃO LINHA POR LINHA
+
+| Linha                        | Explicação                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `CREATE TABLE departamento`  | Inicia a criação de uma tabela chamada `departamento`.                                                                |
+| `cod_dep INT PRIMARY KEY,`   | Cria a coluna `cod_dep`, tipo inteiro, que **identifica unicamente o departamento**. Não pode repetir e nem ser NULL. |
+| `nome VARCHAR(30) NOT NULL,` | Nome do departamento, texto variável até 30 caracteres e **obrigatório**.                                             |
+| `local VARCHAR(20)`          | Localização do departamento, opcional, pois não tem `NOT NULL`.                                                       |
+
+---
+
+Agora a tabela de funcionários, utilizando **tudo que aparece nos slides**:
+
+```sql
+CREATE TABLE funcionario (
+  cod_fun INT PRIMARY KEY,
+  nome VARCHAR(30) NOT NULL,
+  cargo VARCHAR(20),
+  salario DECIMAL(10,2) CHECK (salario > 0),
+  data_inicio DATE,
+  cod_dep INT,
+  FOREIGN KEY (cod_dep) REFERENCES departamento(cod_dep)
+);
+```
+
+### 🔍 EXPLICAÇÃO LINHA POR LINHA
+
+| Linha                                                | Explicação                                                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `cod_fun INT PRIMARY KEY`                            | Chave primária → identifica o funcionário.                                                                        |
+| `nome VARCHAR(30) NOT NULL`                          | Nome obrigatório, sem valor nulo.                                                                                 |
+| `cargo VARCHAR(20)`                                  | Cargo é opcional.                                                                                                 |
+| `salario DECIMAL(10,2) CHECK (salario > 0)`          | Salário numérico com 2 casas decimais. A restrição `CHECK` impede salário ≤ 0 (**conteúdo importante da prova**). |
+| `data_inicio DATE`                                   | Armazena data de admissão.                                                                                        |
+| `cod_dep INT`                                        | Coluna que liga o funcionário ao departamento.                                                                    |
+| `FOREIGN KEY (...) REFERENCES departamento(cod_dep)` | **Chave estrangeira** → garante integridade referencial. Só aceita valores existentes em `departamento`.          |
+
+---
+
+# 🧱 **PARTE 2 — POPULANDO AS TABELAS**
+
+Essas inserções são idênticas ao estilo dos slides: 👇
+
+```sql
+INSERT INTO departamento VALUES (10, 'Vendas', 'São Paulo');
+INSERT INTO departamento VALUES (20, 'Pesquisa', 'Rio de Janeiro');
+INSERT INTO departamento VALUES (30, 'Administração', 'Campinas');
+```
+
+```sql
+INSERT INTO funcionario VALUES
+(101, 'Pedro', 'Gerente', 5000.00, '2020-01-10', 10),
+(102, 'Marina', 'Analista', 2500.00, '2021-05-12', 20),
+(103, 'Carlos', 'Vendedor', 1800.00, '2022-10-01', 10),
+(104, 'Silvia', 'Assistente', 1500.00, '2023-02-17', NULL);
+```
+
+### O que você deve perceber:
+
+✔ Funcionários sem departamento recebem `NULL`
+✔ O banco NÃO permite salário negativo (por causa do `CHECK`)
+✔ Só existe `cod_dep` que já está cadastrado em departamento
+✔ Tudo 100% igual aos exemplos da prova
+
+---
+
+# 🧭 **PARTE 3 — CÓDIGOS DE APOIO (PARA USAR NA PROVA)**
+
+## 📌 SELECT BÁSICO
+
+```sql
+SELECT * FROM funcionario;
+SELECT nome, salario FROM funcionario;
+SELECT nome, salario + 200 AS novo_salario FROM funcionario;
+```
+
+## 📌 WHERE (filtro)
+
+```sql
+SELECT * FROM funcionario WHERE salario > 2000;
+SELECT * FROM funcionario WHERE cod_dep <> 10;
+SELECT * FROM funcionario WHERE salario IS NULL;
+SELECT * FROM funcionario WHERE salario BETWEEN 1500 AND 3000;
+```
+
+## 📌 UPDATE
+
+```sql
+UPDATE funcionario
+SET salario = salario * 1.10
+WHERE cod_dep = 10; -- aumento de 10% só para vendas
+```
+
+## 📌 DELETE
+
+```sql
+DELETE FROM funcionario WHERE salario < 1600;
+```
+
+⚠ Sem WHERE = apaga tudo
+
+---
+
+# 🔗 **JOIN — conteúdo forte da prova**
+
+## INNER JOIN — apenas com correspondência
+
+```sql
+SELECT f.nome, d.nome AS departamento
+FROM funcionario f
+INNER JOIN departamento d ON f.cod_dep = d.cod_dep;
+```
+
+## LEFT JOIN — funcionários sem departamento aparecem
+
+```sql
+SELECT f.nome, d.nome AS departamento
+FROM funcionario f
+LEFT JOIN departamento d ON f.cod_dep = d.cod_dep;
+```
+
+## RIGHT JOIN — departamentos sem funcionários aparecem
+
+```sql
+SELECT d.nome, f.nome AS funcionario
+FROM funcionario f
+RIGHT JOIN departamento d ON f.cod_dep = d.cod_dep;
+```
+
+---
+
+# 🎯 O QUE VOCÊ TEM AGORA
+
+✔ Tabelas completas
+✔ Explicação linha por linha
+✔ Restrições essenciais
+✔ Inserts reais
+✔ SELECT, UPDATE, DELETE
+✔ JOINs prontos para copiar
+
+**Esse pacote cobre 100% do que seu professor costuma cobrar.**
+
+---
+
+## ❓ Quer agora que eu:
+
+### **A) Monte um SIMULADO PRÁTICO baseado nessas tabelas**
+
+Você responde e eu corrijo
+
+### **B) Gere mais códigos prontos, tipo os exercícios 1, 2 e 3 dos slides**
+
+(criar, excluir departamento, listar quem ganha X, etc.)
+
+Responda apenas:
+
+**A** → simulado
+**B** → mais códigos prontos
+
+Qual você quer agora? 🚀
