@@ -1,0 +1,185 @@
+🌟 PARTE 1 — Como transformar um DER em tabelas (esquema físico)
+✔ PASSO 1 — Identificar ENTIDADES
+
+No seu DER:
+
+Aluno
+
+Professor
+
+Titulação
+
+Cada entidade vira uma tabela.
+
+✔ PASSO 2 — Identificar ATRIBUTOS
+
+Exemplo:
+
+Aluno: ra, nome, professor_prontuario
+Professor: prontuario, nome, titulacao_id
+Titulação: id, nome
+
+Dica:
+👉 Sempre escolha UMA coluna pra ser PRIMARY KEY
+(geralmente um ID, RA, prontuário).
+
+✔ PASSO 3 — Identificar RELACIONAMENTOS
+
+Se no DER estiver assim:
+
+Aluno → Orientado por → Professor
+
+Isso significa:
+👉 Aluno tem uma chave estrangeira (FK) apontando para Professor.
+
+Ou seja:
+
+professor_prontuario INT REFERENCES professor(prontuario)
+
+
+Se estiver assim:
+
+Professor → possui → Titulação
+
+Mesma lógica:
+
+titulacao_id INT REFERENCES titulacao(id)
+
+✔ PASSO 4 — Criar as tabelas em SQL, começando pela “tabela pai”
+
+A ordem IDEAL:
+
+Titulação
+
+Professor (depende da titulação)
+
+Aluno (depende do professor)
+
+Por quê?
+Porque FK só funciona se a tabela referenciada já existir.
+
+✔ MODELO GERAL PARA CRIAR TABELA
+CREATE TABLE nome (
+    coluna1 tipo CONSTRAINT,
+    coluna2 tipo CONSTRAINT,
+    ...
+    FOREIGN KEY (coluna) REFERENCES outra_tabela(coluna)
+);
+
+
+Exemplo simples:
+
+CREATE TABLE aluno (
+    ra SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+🌟 PARTE 2 — Como fazer INSERT (inserir dados)
+
+Regra de ouro:
+👉 SEMPRE insira dados na tabela “pai” antes da tabela “filha”.
+
+Exemplo:
+Titulação → Professor → Aluno
+
+✔ MODELO
+INSERT INTO tabela (colunas...)
+VALUES (valores...);
+
+
+Exemplo prático:
+
+INSERT INTO aluno (nome, professor_prontuario)
+VALUES ('Julia', 1);
+
+
+Se o professor 1 não existir → dá erro de FK.
+
+🌟 PARTE 3 — Como fazer SELECT com JOIN
+✔ Quando usar JOIN?
+
+Quando você precisa buscar dados de duas ou mais tabelas ao mesmo tempo.
+
+✔ MODELO
+SELECT campos
+FROM tabela1 AS apelido1
+JOIN tabela2 AS apelido2
+     ON apelido1.fk = apelido2.pk;
+
+
+Exemplo prático:
+
+SELECT a.nome, p.nome
+FROM aluno a
+JOIN professor p ON a.professor_prontuario = p.prontuario;
+
+
+AS só cria apelido → facilita a leitura.
+
+🌟 PARTE 4 — Como fazer consulta com restrição (WHERE)
+
+USE WHERE para filtrar.
+
+✔ MODELO
+SELECT * FROM tabela
+WHERE coluna = valor;
+
+
+E quando for NULL:
+
+WHERE coluna IS NULL
+
+
+Exemplo:
+
+SELECT * FROM aluno
+WHERE professor_prontuario IS NULL;
+
+🌟 PARTE 5 — FULL OUTER JOIN (o mais difícil)
+
+FULL OUTER JOIN junta tudo:
+
+quem tem correspondência
+
+quem NÃO tem
+
+da tabela da esquerda
+
+da tabela da direita
+
+✔ MODELO
+SELECT *
+FROM tabela1
+FULL OUTER JOIN tabela2
+     ON tabela1.fk = tabela2.pk;
+
+
+Exemplo prático:
+
+SELECT a.nome, p.nome
+FROM aluno a
+FULL OUTER JOIN professor p
+     ON a.professor_prontuario = p.prontuario;
+
+🌟 PARTE 6 — UPDATE (atualizar)
+✔ MODELO
+UPDATE tabela
+SET coluna = valor
+WHERE condição;
+
+
+Se esquecer o WHERE → atualiza tudo.
+
+🌟 PARTE 7 — DELETE com subconsulta
+
+Use quando precisa deletar registros baseados em outra tabela.
+
+✔ MODELO
+DELETE FROM tabela
+WHERE pk NOT IN (SELECT fk FROM outra_tabela);
+
+
+Exemplo:
+
+DELETE FROM professor
+WHERE prontuario NOT IN (SELECT professor_prontuario FROM aluno);
