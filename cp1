@@ -1,0 +1,72 @@
+✅ Questão 1 — Liste aluno, professor e titulação
+Resposta correta:
+SELECT a.nome AS aluno,
+       p.nome AS professor,
+       t.nome AS titulacao
+FROM aluno a
+JOIN professor p ON a.professor_prontuario = p.prontuario
+JOIN titulacao t ON p.titulacao_id = t.id;
+
+
+✔ Junta as 3 tabelas
+✔ Usa as FKs certas
+✔ Mostra exatamente as 3 informações pedidas
+
+✅ Questão 2 — Liste somente alunos SEM orientador
+SELECT *
+FROM aluno
+WHERE professor_prontuario IS NULL;
+
+
+✔ Sempre usar IS NULL
+✔ É simples, direto, cai MUITO
+
+✅ Questão 3 — Liste professores que têm orientandos
+SELECT DISTINCT p.nome
+FROM professor p
+JOIN aluno a ON p.prontuario = a.professor_prontuario;
+
+
+✔ Professores que aparecem como orientador
+✔ DISTINCT evita nome repetido caso tenha vários alunos
+
+✅ Questão 4 — Mostre todos alunos e professores, mesmo sem vínculo (FULL JOIN)
+SELECT a.nome AS aluno,
+       p.nome AS professor
+FROM aluno a
+FULL OUTER JOIN professor p
+     ON a.professor_prontuario = p.prontuario;
+
+
+✔ Traz TUDO
+✔ Se não combinar, aparece NULL
+✔ Isso é exatamente a definição de FULL OUTER JOIN
+
+✅ Questão 5 — Atualize o nome de um aluno
+UPDATE aluno
+SET nome = 'Novo Nome'
+WHERE ra = 100;
+
+
+OU (se você não tiver RA na questão):
+
+UPDATE aluno
+SET nome = 'Novo Nome'
+WHERE nome = 'Antigo Nome';
+
+
+✔ UPDATE sempre precisa de WHERE
+✔ Sem WHERE → atualiza tudo
+
+✅ Questão 6 — Delete professores sem orientandos
+DELETE FROM professor
+WHERE prontuario NOT IN (
+    SELECT professor_prontuario
+    FROM aluno
+    WHERE professor_prontuario IS NOT NULL
+);
+
+
+✔ Deleta só quem NUNCA aparece como orientador
+✔ Usa NOT IN + subconsulta
+✔ Forma mais aceita em prova
