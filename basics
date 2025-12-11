@@ -1,0 +1,148 @@
+🌟 1) SELECT — consultar dados
+Modelo:
+SELECT colunas
+FROM tabela;
+
+Com condição (restrição):
+SELECT colunas
+FROM tabela
+WHERE condição;
+
+Exemplo:
+SELECT nome
+FROM aluno;
+
+🌟 2) INSERT — inserir dados
+Modelo:
+INSERT INTO tabela (colunas)
+VALUES (valores);
+
+Exemplo:
+INSERT INTO aluno (ra, nome)
+VALUES (10, 'Julia');
+
+🌟 3) UPDATE — atualizar dados
+Modelo:
+UPDATE tabela
+SET coluna = valor
+WHERE condição;
+
+
+⚠️ SEM WHERE = atualiza tudo
+
+Exemplo:
+UPDATE aluno
+SET nome = 'Julia Oliveira'
+WHERE ra = 10;
+
+🌟 4) DELETE — remover linhas
+Modelo:
+DELETE FROM tabela
+WHERE condição;
+
+
+⚠️ SEM WHERE = apaga tudo
+
+Exemplo:
+DELETE FROM aluno
+WHERE ra = 10;
+
+🌟 5) CREATE TABLE — criar tabela
+Modelo básico:
+CREATE TABLE tabela (
+    coluna tipo CONSTRAINTS
+);
+
+Exemplo:
+CREATE TABLE aluno (
+    ra INT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+🌟 6) FOREIGN KEY — chave estrangeira
+Modelo:
+FOREIGN KEY (coluna)
+REFERENCES tabela_pai(coluna_pai)
+
+Exemplo:
+professor_prontuario INT REFERENCES professor(prontuario)
+
+🌟 7) INNER JOIN — combinar tabelas
+Modelo:
+SELECT colunas
+FROM tabela1 AS a
+JOIN tabela2 AS b
+     ON a.fk = b.pk;
+
+Exemplo:
+SELECT a.nome, p.nome
+FROM aluno a
+JOIN professor p ON a.professor_prontuario = p.prontuario;
+
+🌟 8) LEFT JOIN — tudo da esquerda
+Modelo:
+SELECT colunas
+FROM tabela1
+LEFT JOIN tabela2 ON condição;
+
+Exemplo:
+SELECT a.nome, p.nome
+FROM aluno a
+LEFT JOIN professor p ON a.professor_prontuario = p.prontuario;
+
+🌟 9) RIGHT JOIN — tudo da direita
+Modelo:
+SELECT colunas
+FROM tabela1
+RIGHT JOIN tabela2 ON condição;
+
+🌟 10) FULL OUTER JOIN — tudo de tudo
+Modelo:
+SELECT colunas
+FROM tabela1
+FULL OUTER JOIN tabela2 ON condição;
+
+Exemplo:
+SELECT a.nome, p.nome
+FROM aluno a
+FULL OUTER JOIN professor p ON a.professor_prontuario = p.prontuario;
+
+🌟 11) Consulta com restrição (WHERE)
+Modelo:
+SELECT colunas
+FROM tabela
+WHERE coluna operador valor;
+
+Exemplo:
+SELECT nome
+FROM aluno
+WHERE professor_prontuario IS NULL;
+
+🌟 12) LIKE (começa com / contém)
+Modelo:
+coluna LIKE 'J%'
+coluna LIKE '%a'
+coluna LIKE '%ul%'
+
+🌟 13) BETWEEN (intervalo)
+Modelo:
+coluna BETWEEN valor1 AND valor2
+
+🌟 14) IN (lista de valores)
+Modelo:
+coluna IN (valor1, valor2, valor3)
+
+🌟 15) ORDER BY (ordenação)
+SELECT colunas
+FROM tabela
+ORDER BY coluna ASC;   -- crescente
+ORDER BY coluna DESC;  -- decrescente
+
+🌟 16) COUNT, MAX, MIN, AVG, SUM — funções importantes
+Modelo:
+SELECT FUNCAO(coluna)
+FROM tabela;
+
+Exemplos:
+SELECT COUNT(*) FROM aluno;
+SELECT MAX(sal) FROM professor;
