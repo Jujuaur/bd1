@@ -1,0 +1,99 @@
+⭐ QUESTÃO 1 — Esquema Físico (DER → Tabelas)
+
+O DER possui três entidades: Aluno, Professor e Titulação.
+O aluno é orientado por um professor, e o professor possui uma titulação.
+
+Crie o esquema físico completo com CREATE TABLE.
+
+✔ RESPOSTA:
+CREATE TABLE titulacao (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE professor (
+    prontuario SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    titulacao_id INT REFERENCES titulacao(id)
+);
+
+CREATE TABLE aluno (
+    ra SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    professor_prontuario INT REFERENCES professor(prontuario)
+);
+
+⭐ QUESTÃO 2 — Inserção de Dados
+
+Insira:
+
+Titulações: Mestre e Doutor
+
+Professores: Carlos (Doutor) e Marina (Mestre)
+
+Alunos: Julia (orientada por Carlos), Rafael (orientado por Marina) e Ana (sem orientador)
+
+✔ RESPOSTA:
+INSERT INTO titulacao (nome)
+VALUES ('Mestre'), ('Doutor');
+
+INSERT INTO professor (nome, titulacao_id)
+VALUES ('Carlos', 2),
+       ('Marina', 1);
+
+INSERT INTO aluno (nome, professor_prontuario)
+VALUES ('Julia', 1),
+       ('Rafael', 2),
+       ('Ana', NULL);
+
+⭐ QUESTÃO 3 — JOIN (Aluno + Professor)
+
+Liste o nome do aluno e o nome do professor orientador.
+
+✔ RESPOSTA:
+SELECT a.nome AS aluno,
+       p.nome AS professor
+FROM aluno a
+JOIN professor p
+     ON a.professor_prontuario = p.prontuario;
+
+⭐ QUESTÃO 4 — Consulta com Restrição
+
+Liste somente os alunos sem orientador.
+
+✔ RESPOSTA:
+SELECT *
+FROM aluno
+WHERE professor_prontuario IS NULL;
+
+⭐ QUESTÃO 5 — FULL OUTER JOIN
+
+Mostre todos os alunos e todos os professores, mesmo os que não têm vínculo.
+
+✔ RESPOSTA:
+SELECT a.nome AS aluno,
+       p.nome AS professor
+FROM aluno a
+FULL OUTER JOIN professor p
+     ON a.professor_prontuario = p.prontuario;
+
+⭐ QUESTÃO 6 — UPDATE
+
+Altere o orientador da aluna Julia para a professora Marina.
+
+✔ RESPOSTA:
+UPDATE aluno
+SET professor_prontuario = 2
+WHERE nome = 'Julia';
+
+⭐ QUESTÃO 7 — DELETE com Subconsulta
+
+Remova todos os professores que não possuem orientandos.
+
+✔ RESPOSTA:
+DELETE FROM professor
+WHERE prontuario NOT IN (
+    SELECT professor_prontuario
+    FROM aluno
+    WHERE professor_prontuario IS NOT NULL
+);
