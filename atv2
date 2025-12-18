@@ -1,0 +1,79 @@
+FK (FOREING KEY): chave que referencia a PK de outra tabela e garante integridade
+
+CHECK: restrição que valida valores de uma coluna (CHECK (nota >=0 AND nota <=10))
+
+PRIMARY KEY vs UNIQUE: PK não aceita NULL e não repete; UNIQUE não repete, mas aceita NULL
+
+FULL OUTER JOIN: retorna todos os registros das duas tabelas, combinando quando possível e usando NULL quando não há relação
+
+CROSS JOIN: combina todas as linhas de uma tabela com todas da outra (produto cartesiano)
+
+NOT NULL = Campo obrigatório
+
+	1. CREATE TABLE aluno (
+	Id INT PRIMARY KEY,
+	Nome VARCHAR(100) NOT NULL
+	);
+	
+	2. SELECT nome
+	FROM aluno
+	WHERE professor_prontuario IS NULL;
+	
+	3. SELECT aluno.nome, professor.nome
+	FROM aluno
+	JOIN professor
+	  ON aluno.professor_prontuario = professor.prontuario;
+	
+	SELECT a.nome AS aluno,
+	       p.nome AS professor
+	FROM aluno AS a
+	JOIN professor AS p
+	     ON a.professor_prontuario = p.prontuario;
+	
+	
+	4. INSERT INTO aluno (ra, nome)
+	VALUE (20, 'Ana Silva')
+	
+	5. SELECT nome
+	FROM professor
+	WHERE titulacao_id = 1;
+	
+	6. SELECT aluno.nome, professor.nome
+	FROM aluno
+	LEFT JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+		
+
+
+	SELECT colunas
+	FROM tabela1
+	JOIN tabela2
+		ON tabela1.fk = tabela2.pk;
+		
+	1. SELECT aluno.nome, professor.nome
+	FROM aluno
+	JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+		
+	2. SELECT aluno.nome, professor.nome
+	FROM aluno
+	LEFT JOIN professor
+		ON  aluno.professor_prontuario = professor.prontuario
+		
+	3. SELECT aluno.nome, professor.nome
+	FROM aluno
+	JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+	WHERE professor.prontuario IS NOT NULL;
+		
+	4. SELECT aluno.nome, professor.nome, titulacao.nome
+	FROM aluno
+	JOIN professor 
+		ON aluno.professor_prontuario = professor.prontuario
+	JOIN titulacao
+		ON professor.titulacao_id = titulacao.id;
+		
+	5. SELECT aluno.nome, professor.nome
+	FROM aluno
+	FULL OUTER JOIN professor
+		 ON aluno.professor_prontuario = professor.prontuario;
