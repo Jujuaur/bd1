@@ -1,0 +1,155 @@
+• Entidade → tabela
+• 1:N → FK no lado N
+• N:N → tabela nova
+• Obrigatório → NOT NULL
+Regra de valor → CHECK
+
+1️⃣ Entidade NÃO é atributo
+
+❌ ERRADO:
+
+Aluno (ra, nome, professor_associado)
+
+✅ CERTO:
+
+Aluno (ra, nome)
+
+Relacionamento: Aluno — Professor
+
+👉 Relacionamento liga entidades.
+👉 Atributo descreve a entidade.
+
+2️⃣ Relacionamento NÃO vira atributo
+
+Se no DER tem uma ligação entre entidades, isso não vira coluna direto.
+
+❌ ERRADO:
+
+Titulacao (nome, professor)
+
+✅ CERTO:
+
+Titulacao (id, nome)
+
+Professor → tem FK de titulacao
+
+3️⃣ Regra de OURO da cardinalidade
+
+Grava isso:
+
+1 : N → FK fica no lado N
+
+N : N → cria nova tabela
+
+1 : 1 → FK fica no lado opcional
+
+📌 Se tiver dúvida entre 1:1 ou N:1, quase sempre é N:1 em prova.
+
+4️⃣ N:N SEMPRE vira tabela
+
+Nunca tente “pular” isso.
+
+Exemplo:
+
+Aluno ↔ Disciplina
+
+✅ Vira:
+
+aluno_disciplina
+
+Com:
+
+FK aluno
+
+FK disciplina
+
+PK composta
+
+5️⃣ PK composta: quando usar
+
+Use PK composta quando:
+
+a tabela não tem identificador próprio
+
+é tabela de relacionamento N:N
+
+Exemplo:
+
+aluno_disciplina
+PK (ra, id_disciplina)
+
+6️⃣ Obrigatório no DER = NOT NULL no físico
+
+Se o enunciado diz:
+
+“todo aluno deve ter nome”
+
+“todo professor deve ter titulação”
+
+👉 isso vira:
+
+NOT NULL
+
+7️⃣ Regra de valor = CHECK
+
+Sempre que aparecer:
+
+nota (0 a 10)
+
+salário > 0
+
+idade ≥ 18
+
+👉 use:
+
+CHECK (condição)
+
+
+Isso vale ponto fácil.
+
+8️⃣ FK sempre aponta para PK
+
+Nunca:
+
+REFERENCES professor
+
+
+Sempre:
+
+REFERENCES professor(prontuario)
+
+
+📌 FK → coluna
+📌 REFERENCES → tabela(coluna)
+
+9️⃣ Ordem de criação das tabelas
+
+Crie primeiro:
+
+tabelas sem FK
+
+depois tabelas com FK
+
+por último tabelas N:N
+
+Isso evita erro e mostra organização.
+
+🔟 Modelo mental pra qualquer DER
+
+Quando olhar o DER, se pergunte:
+
+Quais são as entidades?
+
+Quais são os atributos?
+
+Onde está o 1?
+
+Onde está o N?
+
+Tem N:N?
+
+Algum campo é obrigatório?
+
+Algum campo tem regra de valor?
+
+Se você responder isso, o esquema físico sai sozinho.
