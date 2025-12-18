@@ -1,0 +1,23 @@
+	1. INSERT INTO aluno (ra, nome)
+	VALUES (1, 'Maria');
+
+	2. SELECT ra, nome
+	FROM aluno
+	WHERE ra = 1;
+	
+	3. UPDATE aluno
+	SET nome = 'Maria Silva'
+	WHERE ra = 1;
+	
+	4. DELETE FROM aluno
+	WHERE ra = 1;
+	
+	5. SELECT aluno.nome, professor.nome
+	FROM aluno
+	JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+		
+	6. SELECT aluno.nome, professor.nome
+	FROM aluno
+	LEFT JOIN professor
+ON aluno.professor_prontuario = professor.prontuario
