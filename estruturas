@@ -1,0 +1,128 @@
+CREATE TABLE
+
+CREATE TABLE tabela (
+	Coluna tipo CONSTRAINT,
+	Coluna tipo CONSTRAINT
+);
+
+CREATE TABLE aluno (
+	Ra INT PRIMARY KEY,
+	Nome VARCHAR(100) NOT NULL
+);
+
+
+FOREING KEY
+
+Coluna INT REFERENCES tabela_pai(coluna_pai)
+
+Professor_prontuario INT REFERENCES professor(prontuario)
+
+
+INSERT
+
+INSERT INTO tabela (coluna1, coluna2)
+VALUES (valor1, valor2);
+
+
+INSERT INTO aluno (ra, nome)
+VALUES (20, 'Ana Silva');
+
+
+SELECT
+
+SELECT coluna
+FROM tabela;
+
+
+SELECT coluna
+FROM tabela
+WHERE coluna = valor;
+
+SELECT coluna
+FROM tabela
+WHERE coluna IS NULL;
+
+
+UPDATE
+
+UPDATE tabela
+SET coluna = valor
+WHERE condição;
+
+UPDATE aluno
+SET nome = 'Ana'
+WHERE ra = 20;
+
+
+DELETE
+
+DELETE FROM tabela
+WHERE condição;
+
+
+INNER JOIN
+
+SELECT colunas
+FROM tabela1
+JOIN tabela2
+	ON tabela1.fk = tabela2.pk;
+	
+
+LEFT JOIN
+
+SELECT colunas
+FROM tabela1
+LEFT JOIN tabela2
+	ON tabela1.fk = tabela2.pk
+	
+RIGHT JOIN
+
+SELECT colunas
+FROM tabela1
+RIGHT JOIN tabela2
+	ON tabela1.fk = tabela2.pk;
+	
+FULL OUTER JOIN
+
+SELECT colunas
+FROM tabela1
+FULL OUTER JOIN tabela2
+	ON tabela1.fk = tabela2.pk;
+	
+
+JOIN COM AS
+
+SELECT a.coluna, b.coluna
+FROM tabela1 AS a
+JOIN tabela2 AS b
+	ON a.fk = b.pk;
+	
+
+WHERE coluna IN (valor1, valor2)
+
+WHERE coluna BETWEEN valor1 AND valor2
+
+
+
+ORDER BY
+
+ORDER BY coluna ASC
+ORDER BY coluna DESC
+
+
+SELECT COUNT(*)
+FROM tabela;
+
+SELECT MAX(coluna)
+FROM tabela;
+
+
+• CREATE → cria tabela
+• INSERT → insere linha
+• SELECT → consulta
+• UPDATE → altera
+• DELETE → remove
+• JOIN → junta tabelas
+• ON → condição do JOIN
+• FK = PK
+
