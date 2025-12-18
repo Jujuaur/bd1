@@ -1,0 +1,83 @@
+	1. ENTIDADE: ALUNO
+	ATRIBUTOS: RA, nome 
+	ENTIDADE: PROFESSOR
+	ATRIBUTOS: prontuário, nome
+	
+	ENTIDADE: TITULACAO
+	ATRIBUTOS: id, nome
+	
+	RELACIONAMENTO 
+	ALUNO N:1 PROFESSOR
+	PROFESSOR N:1 TITULACAO
+	
+	
+	2. CREATE TABLE aluno (
+		RA int PRIMARY KEY,
+		Nome VARCHAR(100) NOT NULL,
+		Professor_prontuario INT,
+		FOREING KEY (professor_prontuario) REFERENCES professor (prontuario)
+	)
+	
+CREATE TABLE professor (
+	prontuario int PRIMARY KEY,
+	Nome VARCHAR[100] NOT NULL,
+	Titulacao_id INT NOT NULL,
+	 FOREING KEY (titulacao_id) REFERENCES titulacao(id)
+);
+
+CREATE TABLE titulacao (
+    id INT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+
+	3. 
+a.  INSERT INTO titulacao (id, nome)
+	VALUES 
+	(1, 'Mestre'),
+	(2, 'Doutor');
+	
+	b. INSERT INTO professor (prontuario, nome, titulacao_id) VALUES
+	(10, 'Carlos', 2),
+	(20, 'Marina', 1);
+	
+	c. INSERT INTO aluno (ra, nome, professor_prontuario) VALUES
+(1, 'Ana', 10),
+(2, 'João', 20),
+(3, 'Paula', NULL);
+
+	4. SELECT nome
+	FROM aluno
+	WHERE professor_prontuario IS NULL
+	
+	5. SELECT aluno.nome, professor.nome
+	FROM aluno
+	JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+
+	6. SELECT aluno.nome, professor.nome
+	FROM aluno
+	LEFT JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+		
+	7. SELECT aluno.nome, professor.nome
+	FROM aluno
+	FULL OUTER JOIN professor
+		ON aluno.professor_prontuario = professor.prontuario
+	
+	8. UPDATE aluno
+	SET professor_prontuario = 10
+	WHERE nome = 'Paula';
+	
+	9. DELETE FROM professor
+WHERE prontuario NOT IN (
+    SELECT professor_prontuario
+    FROM aluno
+    WHERE professor_prontuario IS NOT NULL
+);
+
+10.
+	a. Chave estrangeira para associar entidades
+	b. PK não pode ter valor null nem variaveis enquanto unique pode ser NULL e recebe varios valores
+	c. Do lado da tabela N
+	d. Quando se junta duas tabelas integralmente
